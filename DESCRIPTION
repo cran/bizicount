@@ -1,6 +1,6 @@
 Package: bizicount
 Title: Bivariate Zero-Inflated Count Models Using Copulas
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("John", "Niehaus", , "jniehaus2257@gmail.com", role = c("aut", "cre"))
 Description: Maximum likelihood estimation of copula-based zero-inflated 
@@ -16,17 +16,17 @@ Description: Maximum likelihood estimation of copula-based zero-inflated
 License: GPL (>= 3)
 Encoding: UTF-8
 URL: https://github.com/jmniehaus/bizicount
-BugReports: https://github.com/jmniehaus/bizicount
-RoxygenNote: 7.1.2
+BugReports: https://github.com/jmniehaus/bizicount/issues
+RoxygenNote: 7.2.0
 Imports: pbivnorm (>= 0.6.0), Formula (>= 1.2-4), rlang (>= 0.4.7),
         MASS (>= 7.3-54), numDeriv (>= 2016.8-1.1), methods, stats,
         utils, DHARMa (>= 0.3.4), texreg (>= 1.37.5)
 Depends: R (>= 4.1.0)
-Suggests: testthat (>= 3.0.0)
+Suggests: covr, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2022-02-09 04:56:53 UTC; john
+Packaged: 2022-07-03 18:11:03 UTC; john
 Author: John Niehaus [aut, cre]
 Maintainer: John Niehaus <jniehaus2257@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-02-10 19:20:02 UTC
+Date/Publication: 2022-07-03 18:30:02 UTC

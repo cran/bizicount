@@ -274,7 +274,7 @@ extract.bizicount = function(model, CI = NULL, id = TRUE){
 #' @slot z.nid z-scores without margin IDs
 #' @slot p p-values for parameter estimates
 #' @slot p.nid p-values without margin IDs
-#' @slot coefmats A list containing coeficient matrices for each margin
+#' @slot coefmats A list containing coefficient matrices for each margin
 #' @slot loglik Scalar log-likelihood at convergence
 #' @slot grad Gradient vector at convergence
 #' @slot n.iter Number of quasi-newton fitting iterations.
@@ -292,6 +292,8 @@ extract.bizicount = function(model, CI = NULL, id = TRUE){
 #' @slot starts list of starting values used
 #' @slot call The model's call
 #' @slot model List containing model matrices, or `NULL` if `keep = F`.
+#' @slot scaled List indicating which covariates of each margin were scaled
+#' according to the `scaling` parameter.
 #' @export
 setClass("bizicount",
          representation(coef = "numeric",
@@ -322,7 +324,8 @@ setClass("bizicount",
                         cop = "character",
                         starts = "list",
                         call = "language",
-                        model = "ANY"
+                        model = "ANY",
+                        scaled = "character"
          )
 )
 

@@ -158,9 +158,10 @@ print.summary.bizicount = function(x, stars = TRUE, ...){
                     divider("=", width, prepend=T)
           }
 
-          return(invisible(NULL))
+          if(!is.null(scaled))
+               cat(paste("**Scaled covariates:", paste(scaled, collapse = ", ")), "\n")
      })
-
+     return(invisible(NULL))
 }
 
 
@@ -482,3 +483,4 @@ make_DHARMa = function(object, nsim=250, seed=123, method="PIT"){
 
      return(dharmas)
 }
+

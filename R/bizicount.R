@@ -12,8 +12,8 @@
 #'   \code{\link[stats]{simulate}} methods for post-estimation diagnostics using
 #'   the \code{\link[=DHARMa]{DHARMa}} package, as well as an
 #'   \code{\link[texreg]{extract}} method for printing professional tables using
-#'   \code{\link[texreg]{texreg}}. See the 'See Also' section for links to these
-#'   methods.
+#'   \code{\link[texreg]{texreg}}, and a test for zero-modification using `zi_test`.
+#'   See the 'See Also' section for links to these methods.
 #'
 #' @details
 #' \itemize{
@@ -32,14 +32,14 @@
 #'
 #' \item \code{frech.min} -- Changing this argument should almost never be
 #' necessary. Frechet (1951) and Hoeffding (1940) showed that copula CDFs have
-#' bounds of the form \eqn{max{u + v - 1, 0} \le C(u, v) \le min{u, v}}, where
+#' bounds of the form \eqn{max\{u + v - 1, 0\} \le C(u, v) \le min\{u, v\}}, where
 #' \eqn{u} and \eqn{v} are uniform realizations derived from the probability
 #' integral transform. Due to numerical underflow, very small values of \eqn{u}
 #' and \eqn{v} can be rounded to zero. Particularly when evaluating the Gaussian
 #' copula CDF this is problematic, ultimately leading to infinite-valued
 #' likelihood evaluations. Therefore, we impose Frechet-Hoeffding bounds
-#' numerically as \eqn{max{u + v - 1, frech.min} \le C(u, v) \le min{u, v, 1 -
-#' frech.min}}. NOTE: Setting this to 0 imposes the original Frechet bounds
+#' numerically as \eqn{max\{u + v - 1, frech.min\} \le C(u, v) \le min\{u, v, 1 -
+#' frech.min\}}. NOTE: Setting this to 0 imposes the original Frechet bounds
 #' mentioned above.
 #'
 #' \item \code{pmf.min} -- Changing this argument should almost never be
@@ -153,18 +153,16 @@
 #'       See Gelman (2008), "Scaling Regression Inputs by Dividing by Two Standard Deviations."
 #'    * `"mm"` will apply min-max normalization so that continuous covariates lie within a unit hypercube.
 #'
-#'  Factor variables, offsets, and the intercept are not scaled. If scaling,
-#'  it is recommended that data be supplied in a dataframe (as opposed to from the global environment),
-#'  otherwise the automated scaling cannot reliably be applied. The names of variables that have been
-#'  scaled are returned as part of the `bizicount` object, in the list-element called `scaled`.
+#'  Factor variables, offsets, and the intercept are not scaled. The names of variables that have been
+#'  scaled are returned as part of the `bizicount` object, in the list-element called `scaled`. Scaling
+#'  is highly recommended to improve model convergence.
 #' @param starts Numeric vector of starting values for parameter estimates. See
 #'   'Details' section regarding the correct order for the values in this vector.
 #'   If `NULL`, starting values are obtained automatically by a univariate regression fit.
 #' @param keep Logical indicating whether to keep the model matrix in the
-#'   returned model object. Defaults to `FALSE` to conserve memory. NOTE: This
-#'   must be set to `TRUE` to use the  \code{\link[texreg]{texreg}},
-#'   \code{\link{simulate.bizicount}}, \code{\link[stats]{fitted}}, or
-#'   \code{\link{make_DHARMa}} functions with `bizicount` objects.
+#'   returned model object. Defaults to `TRUE`, but can be set to `FALSE` to conserve memory.
+#'   NOTE: Must be `TRUE` to use any post-estimation functions in this package,
+#'   including `zi_test`.
 #' @param subset A vector indicating the subset of observations to use in
 #' estimation.
 #' @param na.action A function which indicates what should happen when the data
@@ -181,6 +179,8 @@
 #'   function, \code{\link[stats]{nlm}}. See 'Details' for some parameters that
 #'   may be useful to alter.
 #'
+#' @seealso \code{\link{extract.bizicount}}, \code{\link{make_DHARMa}}, \code{\link{zi_test}}
+#'
 #' @author John Niehaus
 #'
 #'
@@ -194,7 +194,7 @@ bizicount = function(fmla1,
                      link.zi = c("logit", "logit"),
                      scaling = "none",
                      starts = NULL,
-                     keep = FALSE,
+                     keep = TRUE,
                      subset,
                      na.action,
                      weights,
@@ -421,7 +421,9 @@ bizicount = function(fmla1,
   mf[[1L]] <- quote(stats::model.frame)
   mf <- eval(mf, parent.frame())
 
+
   y = model.part(fmla, mf, lhs = c(1, 2))
+  mf = if(scaling != 0) scaler(mf, scaling = scaling) else mf
 
   X = lapply(fmla.list, function(x)
     model.matrix(x, mf, rhs = 1))
@@ -434,11 +436,6 @@ bizicount = function(fmla1,
   if (length(Z) == 1)
     Z[[2]] = NULL
 
-
-  if (scaling != 0){
-    X = lapply(X, scaler, scaling = scaling)
-    Z = lapply(Z, scaler, scaling = scaling)
-  }
 
   offset.ct = lapply(fmla.list,
                      function(x)
@@ -547,36 +544,40 @@ bizicount = function(fmla1,
   # transform hessian with change of variables to get correct standard errors for
   # transformed parameters. only necessary if negative binomial margins or gaussian copula
   if (n.nb > 0 || cop == "gaus") {
-    hess.mult = matrix(1,
-                       nrow = nrow(out$hessian),
-                       ncol = ncol(out$hessian))
+       hess.mult = matrix(1,
+                          nrow = nrow(out$hessian),
+                          ncol = ncol(out$hessian))
 
 
-    thpr.inv = if (cop == "gaus")
-      cosh(tail(out$estimate, 1)) ^ 2
-    else
-      1
+       thpr.inv = if (cop == "gaus")
+            cosh(tail(out$estimate, 1)) ^ 2
+       else
+            1
 
-    if (n.nb > 0) {
-      # get dispersion, 1/derivative, reverse them for multiplication below
-      dpr.inv = rev(1 / exp(tail(out$estimate, (n.nb + 1))[1:n.nb]))
-      d = nrow(hess.mult)
 
-      hess.mult[d, ] = thpr.inv # replace hess multiplier row d with 1/derivative of dependence
-      hess.mult[, d] = hess.mult[, d] * thpr.inv # multiply hess multiplier col d by 1/deriv dependence
-      hess.mult[(d - 1), ] = hess.mult[(d - 1), ] * dpr.inv[1] # multiply second to last row of hess by 1/deriv disp.2 (recall use of rev())
-      hess.mult[, (d - 1)] = hess.mult[, (d - 1)] * dpr.inv[1]
+       d = nrow(hess.mult)
 
-      if (n.nb > 1) {
-        hess.mult[(d - 2) , ] = hess.mult[(d - 2) , ] * dpr.inv[2] #first dispersion transformation (recall use of rev())
-        hess.mult[, (d - 2)] = hess.mult[, (d - 2)] * dpr.inv[2]
-      }
-    }
+       hess.mult[d,] = thpr.inv # replace hess multiplier row d with 1/derivative of dependence
+       hess.mult[, d] = hess.mult[, d] * thpr.inv # multiply hess multiplier col d by 1/deriv dependence
 
-    #transform original hess element-wise
-    hess.new = out$hessian * hess.mult
+       if (n.nb > 0) {
+            # get dispersion, 1/derivative, reverse them for multiplication below
+            dpr.inv = rev(1 / exp(tail(out$estimate, (n.nb + 1))[1:n.nb]))
+
+            hess.mult[(d - 1),] = hess.mult[(d - 1),] * dpr.inv[1] # multiply second to last row of hess by 1/deriv disp.2 (recall use of rev())
+            hess.mult[, (d - 1)] = hess.mult[, (d - 1)] * dpr.inv[1]
+
+            if (n.nb > 1) {
+                 hess.mult[(d - 2) ,] = hess.mult[(d - 2) ,] * dpr.inv[2] #first dispersion transformation (recall use of rev())
+                 hess.mult[, (d - 2)] = hess.mult[, (d - 2)] * dpr.inv[2]
+            }
+       }
+
+       #transform original hess element-wise
+       hess.new = out$hessian * hess.mult
   } else
-    hess.new = out$hessian
+       hess.new = out$hessian
+
 
 
   # check that hessian of loglik is neg def
@@ -586,6 +587,7 @@ bizicount = function(fmla1,
     "Hessian of loglik is not negative definite at convergence point; convergence point is not a maximum.",
     type = "warning"
   )
+
 
   #cleanup results for print
   beta = beta.orig = out$estimate
@@ -704,11 +706,7 @@ bizicount = function(fmla1,
     paste0(append, names(beta)[appind])
 
   # indicate which vars are scaled
-  scaled = unique(unlist(c(
-    lapply(X, attr, which = "scaled"),
-    lapply(Z, attr, which = 'scaled')
-    )))
-
+  scaled = attr(mf, which = "scaled")
 
   res =
     list(

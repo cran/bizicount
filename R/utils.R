@@ -194,39 +194,7 @@ set.defaults = function(de.list, de.names, de.values) {
 }
 
 
-
-
-
-scaler = function(df, scaling = 1){
-
-  to_scale = !(sapply(df, function(col) length(unique(col)) %in% c(1,2) || is.character(col) || is.factor(col))
-               | grepl("^offset\\(|^\\(weights\\)$", names(df)))
-
-  to_scale[c(1,2)] = c(F,F) # first two are always outcome vectors, never scale them.
-
-  if(sum(to_scale) == 0)
-       return(df)
-
-  if(scaling == 3) {
-    mn = apply(df[, to_scale, drop=F], 2, min)
-    mx = apply(df[, to_scale, drop=F], 2, max)
-  }
-
-  df[,to_scale] = switch(
-    scaling,
-     scale(df[,to_scale], center = T, scale = T),
-     scale(df[,to_scale], center = T, scale = T)/2,
-     scale(df[,to_scale], center = mn, scale = (mx - mn))
-  )
-
-
-  attr(df, "scaled") = names(to_scale)[to_scale]
-  return(df)
-}
-
-
-
-
+# check if in unit interval (closed or open)
 vprob = function(x, eq = 'both'){
      eq = match_arg(eq, choices = c("both", "left", "right"))
 

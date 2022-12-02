@@ -50,20 +50,9 @@ for the count portion of each margin. One of \code{c("log", "identity", "sqrt")}
 for the zero-inflation portion of each margin. One of \code{c("logit", "probit", "cauchit", "log", "cloglog")}. Ignored if corresponding \code{margins} entry is
 not zero-inflated.}
 
-\item{scaling}{Character string (partial matching supported) indicating what
-type of scaling to apply to covariates (if any). One of \code{c("none", "1sd", "gelman", "mm")}.
-\itemize{
-\item \code{"none"} will apply no alterations to covariates.
-\item \code{"1sd"} will subtract off the mean, and divide by one standard deviation.
-\item \code{"gelman"} will subtract off the mean, and divide by two standard deviations,
-which makes binary and continuous variables have a similar interpretation.
-See Gelman (2008), "Scaling Regression Inputs by Dividing by Two Standard Deviations."
-\item \code{"mm"} will apply min-max normalization so that continuous covariates lie within a unit hypercube.
-}
-
-Factor variables, offsets, and the intercept are not scaled. The names of variables that have been
-scaled are returned as part of the \code{bizicount} object, in the list-element called \code{scaled}. Scaling
-is highly recommended to improve model convergence.}
+\item{scaling}{Deprecated. It is recommended that users scale their covariates
+if they encounter convergence issues, which can be accomplished using the
+\code{scale()} function on their data before putting it into the \code{bizicount()} function.}
 
 \item{starts}{Numeric vector of starting values for parameter estimates. See
 'Details' section regarding the correct order for the values in this vector.
@@ -77,8 +66,7 @@ including \code{zi_test}.}
 \item{subset}{A vector indicating the subset of observations to use in
 estimation.}
 
-\item{na.action}{A function which indicates what should happen when the data
-contain NAs. Default is \code{\link[stats]{na.omit}}.}
+\item{na.action}{Deprecated.}
 
 \item{weights}{An optional numeric vector of weights for each observation.}
 
@@ -127,8 +115,6 @@ actual function, not their names)
 \item \code{starts} -- list of starting values used
 \item \code{call} -- The model's call
 \item \code{model} -- List containing model matrices, or \code{NULL} if \code{keep = F}.
-\item \code{scaled} -- Vector indicating which covariates in each margin were scaled
-according to the \code{scaling} parameter.
 }
 }
 \description{
@@ -270,7 +256,7 @@ f2 = y2 ~ X2.1 + X2.2 | Z2.1 + Z2.2
 
 # estimate model
 
-mod = bizicount(f1, f2, dat, cop = "g", margins = c("zip", "zip"), keep = TRUE)
+mod = bizicount(f1, f2, dat, cop = "g", margins = c("zinb", "zip"), keep = TRUE)
 
 print(mod)
 summary(mod)

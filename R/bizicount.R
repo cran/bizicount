@@ -30,6 +30,7 @@
 #'  Thus, in general count parameters should come first, followed by
 #'  zero-inflation parameters, and finally inverse dispersion parameters.
 #'
+#'
 #' \item \code{frech.min} -- Changing this argument should almost never be
 #' necessary. Frechet (1951) and Hoeffding (1940) showed that copula CDFs have
 #' bounds of the form \eqn{max\{u + v - 1, 0\} \le C(u, v) \le min\{u, v\}}, where
@@ -56,6 +57,7 @@
 #' useful to lower `stepmax` particularly when the Hessian is not negative
 #' definite at convergence, sometimes to a value between 0 and 1. It can also be
 #' beneficial to increase `steptol`.
+#'
 #'
 #' }
 #'
@@ -115,8 +117,6 @@
 #' \item `starts` -- list of starting values used
 #' \item `call` -- The model's call
 #' \item `model` -- List containing model matrices, or `NULL` if `keep = F`.
-#' \item `scaled` -- Vector indicating which covariates in each margin were scaled
-#' according to the `scaling` parameter.
 #' }
 #'
 #'
@@ -144,18 +144,9 @@
 #'   for the zero-inflation portion of each margin. One of `c("logit", "probit",
 #'   "cauchit", "log", "cloglog")`. Ignored if corresponding `margins` entry is
 #'   not zero-inflated.
-#' @param scaling Character string (partial matching supported) indicating what
-#' type of scaling to apply to covariates (if any). One of `c("none", "1sd", "gelman", "mm")`.
-#'    * `"none"` will apply no alterations to covariates.
-#'    * `"1sd"` will subtract off the mean, and divide by one standard deviation.
-#'    * `"gelman"` will subtract off the mean, and divide by two standard deviations,
-#'       which makes binary and continuous variables have a similar interpretation.
-#'       See Gelman (2008), "Scaling Regression Inputs by Dividing by Two Standard Deviations."
-#'    * `"mm"` will apply min-max normalization so that continuous covariates lie within a unit hypercube.
-#'
-#'  Factor variables, offsets, and the intercept are not scaled. The names of variables that have been
-#'  scaled are returned as part of the `bizicount` object, in the list-element called `scaled`. Scaling
-#'  is highly recommended to improve model convergence.
+#' @param scaling Deprecated. It is recommended that users scale their covariates
+#' if they encounter convergence issues, which can be accomplished using the
+#' `scale()` function on their data before putting it into the `bizicount()` function.
 #' @param starts Numeric vector of starting values for parameter estimates. See
 #'   'Details' section regarding the correct order for the values in this vector.
 #'   If `NULL`, starting values are obtained automatically by a univariate regression fit.
@@ -165,8 +156,7 @@
 #'   including `zi_test`.
 #' @param subset A vector indicating the subset of observations to use in
 #' estimation.
-#' @param na.action A function which indicates what should happen when the data
-#'   contain NAs. Default is \code{\link[stats]{na.omit}}.
+#' @param na.action Deprecated.
 #' @param weights An optional numeric vector of weights for each observation.
 #' @param frech.min Lower boundary for Frechet-Hoeffding bounds on copula CDF.
 #'   Used for computational purposes to prevent over/underflow in likelihood
@@ -203,6 +193,8 @@ bizicount = function(fmla1,
                      ...) {
   #some arg checking
   check_biv_args()
+
+
 
   # Bivariate likelihood (univariate is lower down)
   cop.lik = function(parms) {
@@ -385,7 +377,8 @@ bizicount = function(fmla1,
   } # end of starting values function
 
   scaling = match_arg(scaling, c("none", "1sd", "gelman", "mm"))
-  scaling = switch(scaling, "none" = 0, "1sd" = 1, "gelman" = 2, "mm" = 3)
+  if(scaling != 'none')
+       warning("`scaling` parameter is deprecated; no scaling was applied. Use the `scale()` function on your data prior to inputting it to `bizicount()`.")
   cop     = match_arg(cop, c("frank", "gaus"))
   link.ct = match_arg(link.ct, c("sqrt", "identity", "log"), several.ok = T)
   link.zi = match_arg(link.zi,
@@ -413,17 +406,16 @@ bizicount = function(fmla1,
   fmla.list = list(as.Formula(fmla1),
                    as.Formula(fmla2))
 
+
   mf = match.call(expand.dots = F)
-  m = match(c("data", "weights", "subset", "na.action"), names(mf), 0)
+  m = match(c("data", "weights", "subset"), names(mf), 0)
   mf = mf[c(1, m)]
   mf$drop.unused.levels <- TRUE
   mf$formula = fmla
   mf[[1L]] <- quote(stats::model.frame)
-  mf <- eval(mf, parent.frame())
-
+  mf <- eval.parent(mf)
 
   y = model.part(fmla, mf, lhs = c(1, 2))
-  mf = if(scaling != 0) scaler(mf, scaling = scaling) else mf
 
   X = lapply(fmla.list, function(x)
     model.matrix(x, mf, rhs = 1))
@@ -705,8 +697,7 @@ bizicount = function(fmla1,
     names(p)[appind] = #
     paste0(append, names(beta)[appind])
 
-  # indicate which vars are scaled
-  scaled = attr(mf, which = "scaled")
+
 
   res =
     list(
@@ -749,8 +740,7 @@ bizicount = function(fmla1,
           weights = weights
         )
       else
-        NULL,
-      scaled = scaled
+        NULL
     )
 
 

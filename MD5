@@ -1,10 +1,10 @@
-fd056534fc0a290027801078fbd0710f *DESCRIPTION
+6efef984c550c68a7f669c07f36b17d1 *DESCRIPTION
 f0eb4b1cab9aef246cb4e9a8545db4ae *NAMESPACE
 8ccf2ccfaf67fbce25ac380d436fe6de *NEWS.md
 210fc6babf52522fca6baef5aa690dea *R/arg_checks.R
 720a3d352339461ce5ce09f71140ac13 *R/bizicount-methods.R
-d321f6f9daced02c7b11092be2a08876 *R/bizicount-package.R
-5fa4e52d9829521708e7fdcd3b541be3 *R/bizicount.R
+a530647306662489f43e6f7ad759c7eb *R/bizicount-package.R
+13ab58aaab7effce5977b9eb90be637c *R/bizicount.R
 42ce2fa6bc593ac4398cf8a760e5cc68 *R/bounds.R
 a7eacddb93d03ba80824398cd8cdecdc *R/copula_dist_fns.R
 2babd89eb2261a22877acc87e2837c06 *R/data.R
@@ -15,6 +15,7 @@ edb68dfb243320fab6a523fbcb4c0f05 *R/zicreg-methods.R
 c3a40f4a6d18c1a21bcf34ab38d9158e *R/zicreg.R
 f71a17b211219b0391e1ac0baa5b651f *README.md
 54d85ab06e7d144d4e9cbfa4b77ca88f *data/terror.rda
+001f7d209a0e527f0a0586e208cf2976 *inst/CITATION
 64864dad8ee5aa273acf0b5bbd9514ad *inst/examples/bizicount_ex.R
 e6abe51f9a609297ac46d890b7c6618b *inst/examples/extract_bizicount_ex.R
 a1daabff2bcb5269073219062962d7a0 *inst/examples/extract_zicreg_ex.R
@@ -27,8 +28,8 @@ b14c370c918fb1ea569e9f30a878654b *inst/examples/zi_test_ex.R
 e31d8f001ea395e8e023dc776e331c71 *inst/examples/zinb_dist_ex.R
 0d9413409de9fad8269c4708d230d8e0 *inst/examples/zip_dist_ex.R
 8aaf1bea309cce9387ea7c1ce34d1704 *man/bizicount-class.Rd
-7d2306d33bbabc5881ba7fa65d8346c0 *man/bizicount-package.Rd
-5e404559f616fb7e14a2b5d942f68958 *man/bizicount.Rd
+799ef713b2f304abf46f62699f6ae1d6 *man/bizicount-package.Rd
+43496f992067d91638258cb8dd0f5657 *man/bizicount.Rd
 dd54785ba94128e01a075f156361435d *man/extract.bizicount.Rd
 14a589db7b3305e7e0d5e1772b4d99ed *man/extract.zicreg.Rd
 f23a6d5eaae2876acff2def04fc76a13 *man/make_DHARMa.Rd

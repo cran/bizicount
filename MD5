@@ -1,10 +1,10 @@
-6efef984c550c68a7f669c07f36b17d1 *DESCRIPTION
+91bbab165fc024fc26a0746fee3c320d *DESCRIPTION
 f0eb4b1cab9aef246cb4e9a8545db4ae *NAMESPACE
-8ccf2ccfaf67fbce25ac380d436fe6de *NEWS.md
+fabed3c9cd925e80db9a11955f3bb641 *NEWS.md
 210fc6babf52522fca6baef5aa690dea *R/arg_checks.R
 720a3d352339461ce5ce09f71140ac13 *R/bizicount-methods.R
 a530647306662489f43e6f7ad759c7eb *R/bizicount-package.R
-13ab58aaab7effce5977b9eb90be637c *R/bizicount.R
+d0ff845ff7cf8e9b8ec531b5f2ae7dd8 *R/bizicount.R
 42ce2fa6bc593ac4398cf8a760e5cc68 *R/bounds.R
 a7eacddb93d03ba80824398cd8cdecdc *R/copula_dist_fns.R
 2babd89eb2261a22877acc87e2837c06 *R/data.R
@@ -12,8 +12,8 @@ c5876eed2708af454780a9613e4eb1bc *R/utils.R
 447640de7075366ba9f711e777030a9e *R/zi_dist_fns.R
 4837ae4f84abcb258fb1bbfdfd7d1cce *R/zi_test.R
 edb68dfb243320fab6a523fbcb4c0f05 *R/zicreg-methods.R
-c3a40f4a6d18c1a21bcf34ab38d9158e *R/zicreg.R
-f71a17b211219b0391e1ac0baa5b651f *README.md
+60d2bdea506430fbb8cf15daf5bba58d *R/zicreg.R
+044e5f497119dfce994028acc6b9cb22 *README.md
 54d85ab06e7d144d4e9cbfa4b77ca88f *data/terror.rda
 001f7d209a0e527f0a0586e208cf2976 *inst/CITATION
 64864dad8ee5aa273acf0b5bbd9514ad *inst/examples/bizicount_ex.R
@@ -29,7 +29,7 @@ e31d8f001ea395e8e023dc776e331c71 *inst/examples/zinb_dist_ex.R
 0d9413409de9fad8269c4708d230d8e0 *inst/examples/zip_dist_ex.R
 8aaf1bea309cce9387ea7c1ce34d1704 *man/bizicount-class.Rd
 799ef713b2f304abf46f62699f6ae1d6 *man/bizicount-package.Rd
-43496f992067d91638258cb8dd0f5657 *man/bizicount.Rd
+f61bbefc54f68df0e65de75297ba991a *man/bizicount.Rd
 dd54785ba94128e01a075f156361435d *man/extract.bizicount.Rd
 14a589db7b3305e7e0d5e1772b4d99ed *man/extract.zicreg.Rd
 f23a6d5eaae2876acff2def04fc76a13 *man/make_DHARMa.Rd
@@ -38,7 +38,7 @@ b50967d27cd134049502626e6285b07a *man/simulate.bizicount.Rd
 e4d249190b5077a12e88efd3ce0a7cca *man/simulate.zicreg.Rd
 fe3518158bfcfbf31736342f88a5c39a *man/terror.Rd
 5734d7bfe92f99f2ce1cc7bd7d2ba494 *man/zi_test.Rd
-4f9486fe5d1995ad2931166bc535bee6 *man/zic.reg.Rd
+9e1dfc423ddb3dd729e97adc30a7d02a *man/zic.reg.Rd
 5e65945b9e83290078219e35d464884a *man/zicreg-class.Rd
 6c8cf45e2ff0f909ca17529390d167c4 *man/zinb.Rd
 11d68037b0210d397b8f89e7625f991b *man/zip.Rd
